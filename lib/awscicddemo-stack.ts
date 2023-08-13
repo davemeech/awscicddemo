@@ -1,6 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as pipelines from 'aws-cdk-lib/pipelines'
+import { AWSCICDDemoStaging } from './awscicddemo-app-stack'
+import { ManualApprovalStep } from 'aws-cdk-lib/pipelines';
 
 export class AwscicddemoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,6 +19,16 @@ export class AwscicddemoStack extends cdk.Stack {
           'npx cdk synth',
         ]
       })
-    })
+    });
+
+    const testingStage = cicdPipeline.addStage(new AWSCICDDemoStaging(this, 'staging', {
+      env: {account: '492023795884', region: 'us-east-1'}
+    }));
+
+    testingStage.addPost(new ManualApprovalStep('approval'));
+
+    const prodStage = cicdPipeline.addStage(new AWSCICDDemoStaging(this, 'prod', {
+      env: {account: '492023795884', region: 'us-east-1'}
+    }));
   }
 }
