@@ -13,6 +13,7 @@ export class AwscicddemoStack extends cdk.Stack {
         commands: [
           'npm ci',
           'npm run build',
+          'npm run test',
           'npx cdk synth',
         ]
       })
